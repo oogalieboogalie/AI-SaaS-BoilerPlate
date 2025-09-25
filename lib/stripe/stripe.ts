@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 import { SubscriptionPlan, PLAN_CONFIGS } from '@/types';
 import { supabaseAdmin } from '@/lib/database/supabase';
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy', {
   apiVersion: '2023-10-16',
   typescript: true,
 });

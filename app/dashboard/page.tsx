@@ -10,7 +10,7 @@ export default async function DashboardPage() {
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Welcome back, {user.name}! Here's an overview of your account.
+          Welcome back, {user.name}! Here&apos;s an overview of your account.
         </p>
       </div>
 
