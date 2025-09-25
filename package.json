@@ -1,0 +1,46 @@
+{
+  "name": "ai-saas-boilerplate",
+  "version": "1.0.0",
+  "description": "Production-ready AI-SaaS boilerplate with Next.js, Supabase, TypeScript, and Tailwind",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "db:generate": "supabase gen types typescript --project-id $SUPABASE_PROJECT_ID --schema public > types/supabase.ts",
+    "stripe:listen": "stripe listen --forward-to localhost:3000/api/webhooks/stripe"
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.7.17",
+    "@heroicons/react": "^2.0.18",
+    "@stripe/stripe-js": "^2.2.0",
+    "@supabase/auth-helpers-nextjs": "^0.8.7",
+    "@supabase/supabase-js": "^2.38.4",
+    "@tailwindcss/forms": "^0.5.7",
+    "@types/node": "^20.10.4",
+    "@types/react": "^18.2.42",
+    "@types/react-dom": "^18.2.17",
+    "autoprefixer": "^10.4.16",
+    "clsx": "^2.0.0",
+    "lucide-react": "^0.294.0",
+    "next": "^14.0.4",
+    "postcss": "^8.4.32",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.48.2",
+    "stripe": "^14.7.0",
+    "tailwind-merge": "^2.1.0",
+    "tailwindcss": "^3.3.6",
+    "typescript": "^5.3.3",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.7",
+    "eslint": "^8.55.0",
+    "eslint-config-next": "^14.0.4",
+    "supabase": "^1.127.4",
+    "uuid": "^9.0.1"
+  }
+}
