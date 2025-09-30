@@ -4,13 +4,19 @@
   "description": "Production-ready AI-SaaS boilerplate with Next.js, Supabase, TypeScript, and Tailwind",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "npm run validate:env && next dev",
+    "build": "npm run validate:env && next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
+    "validate:env": "node scripts/validate-env.js",
     "db:generate": "supabase gen types typescript --project-id $SUPABASE_PROJECT_ID --schema public > types/supabase.ts",
-    "stripe:listen": "stripe listen --forward-to localhost:3000/api/webhooks/stripe"
+    "stripe:listen": "stripe listen --forward-to localhost:3000/api/webhooks/stripe",
+    "docker:build": "docker build -t ai-saas-boilerplate .",
+    "docker:run": "docker run -p 3000:3000 --env-file .env.local ai-saas-boilerplate",
+    "deploy:vercel": "vercel --prod",
+    "setup": "npm install && npm run validate:env",
+    "health": "curl -f http://localhost:3000/api/health || exit 1"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
