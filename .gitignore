@@ -39,3 +39,14 @@ next-env.d.ts
 supabase/.branches
 supabase/.temp
 supabase/config.toml
+
+# docker
+.docker
+
+# logs
+logs
+*.log
+
+# temporary files
+/tmp
+.tmp
