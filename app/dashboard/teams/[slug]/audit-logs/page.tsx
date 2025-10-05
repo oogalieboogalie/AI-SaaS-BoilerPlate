@@ -52,9 +52,10 @@ async function getTeam(slug: string) {
 export default async function AuditLogPage({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
-  const team = await getTeam(params.slug)
+  const { slug } = await params
+  const team = await getTeam(slug)
   const logs = await getAuditLogs(team.id)
 
   return (

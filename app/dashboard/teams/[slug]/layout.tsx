@@ -40,9 +40,10 @@ export default async function TeamLayout({
   params,
 }: {
   children: React.ReactNode
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
-  const team = await getTeam(params.slug)
+  const { slug } = await params
+  const team = await getTeam(slug)
 
   return (
     <div className="space-y-6">
@@ -58,7 +59,7 @@ export default async function TeamLayout({
             {teamNavLinks.map((item) => (
               <Link
                 key={item.name}
-                href={`/dashboard/teams/${params.slug}${item.href}`}
+                href={`/dashboard/teams/${slug}${item.href}`}
                 className="hover:bg-muted inline-flex items-center rounded-md px-3 py-2 text-sm font-medium"
               >
                 {item.name}

@@ -68,7 +68,7 @@ export function TeamSettingsForm({ team }: TeamSettingsFormProps) {
       <CardHeader>
         <CardTitle>General Settings</CardTitle>
         <CardDescription>
-          Update your team's name and other general settings.
+          Update your team&apos;s name and other general settings.
         </CardDescription>
       </CardHeader>
       <CardContent>

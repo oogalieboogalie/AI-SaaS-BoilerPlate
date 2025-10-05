@@ -34,9 +34,10 @@ async function checkUserRole(supabase: any, userId: string, teamId: string) {
 
 export async function GET(
   request: Request,
-  { params }: { params: { teamId: string } },
+  { params }: { params: Promise<{ teamId: string }> },
 ) {
   try {
+    const { teamId } = await params
     const supabase = createRouteHandlerClient({ cookies })
     const {
       data: { session },
@@ -50,7 +51,7 @@ export async function GET(
     const { data: apiKeys, error } = await supabase
       .from('api_keys')
       .select('id, name, key_prefix, created_at, last_used_at, revoked_at')
-      .eq('team_id', params.teamId)
+      .eq('team_id', teamId)
       .is('revoked_at', null) // Only get active keys
       .order('created_at', { ascending: false })
 
@@ -68,9 +69,10 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { teamId: string } },
+  { params }: { params: Promise<{ teamId: string }> },
 ) {
   try {
+    const { teamId } = await params
     const supabase = createRouteHandlerClient({ cookies })
     const {
       data: { session },
@@ -81,11 +83,7 @@ export async function POST(
     }
 
     // Check user role
-    const userRole = await checkUserRole(
-      supabase,
-      session.user.id,
-      params.teamId,
-    )
+    const userRole = await checkUserRole(supabase, session.user.id, teamId)
     if (userRole !== 'owner' && userRole !== 'admin') {
       return new NextResponse(
         'Forbidden: You do not have permission to create API keys.',
@@ -109,7 +107,7 @@ export async function POST(
         name,
         key_hash: keyHash,
         key_prefix: keyPrefix,
-        team_id: params.teamId,
+        team_id: teamId,
         user_id: session.user.id,
       })
       .select('id')
@@ -130,7 +128,7 @@ export async function POST(
     }
 
     await createAuditLog({
-      teamId: params.teamId,
+      teamId: teamId,
       userId: session.user.id,
       action: 'api_key.created',
       details: {

@@ -1,8 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import {
-  createClientComponentClient,
-  createServerComponentClient,
-} from '@supabase/auth-helpers-nextjs'
+import { createServerClient, createBrowserClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
 const supabaseUrl =
@@ -14,14 +11,33 @@ const supabaseServiceKey =
 // Client-side Supabase client
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-// Server-side Supabase client
-export const createServerSupabaseClient = () => {
-  return createServerComponentClient({ cookies })
+// Server-side Supabase client for Next.js 15
+export const createServerSupabaseClient = async () => {
+  const cookieStore = await cookies()
+
+  return createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll()
+      },
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options),
+          )
+        } catch {
+          // The `setAll` method was called from a Server Component.
+          // This can be ignored if you have middleware refreshing
+          // user sessions.
+        }
+      },
+    },
+  })
 }
 
 // Client component Supabase client
 export const createClientSupabaseClient = () => {
-  return createClientComponentClient()
+  return createBrowserClient(supabaseUrl, supabaseAnonKey)
 }
 
 // Admin client with service role key (for server-side operations)

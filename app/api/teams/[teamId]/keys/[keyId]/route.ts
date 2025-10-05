@@ -20,9 +20,10 @@ async function checkUserRole(supabase: any, userId: string, teamId: string) {
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { teamId: string; keyId: string } },
+  { params }: { params: Promise<{ teamId: string; keyId: string }> },
 ) {
   try {
+    const { teamId, keyId } = await params
     const supabase = createRouteHandlerClient({ cookies })
     const {
       data: { session },
@@ -33,11 +34,7 @@ export async function DELETE(
     }
 
     // Check user role for authorization
-    const userRole = await checkUserRole(
-      supabase,
-      session.user.id,
-      params.teamId,
-    )
+    const userRole = await checkUserRole(supabase, session.user.id, teamId)
     if (userRole !== 'owner' && userRole !== 'admin') {
       return new NextResponse(
         'Forbidden: You do not have permission to revoke API keys.',
@@ -50,8 +47,8 @@ export async function DELETE(
     const { error } = await supabase
       .from('api_keys')
       .update({ revoked_at: new Date().toISOString() })
-      .eq('id', params.keyId)
-      .eq('team_id', params.teamId)
+      .eq('id', keyId)
+      .eq('team_id', teamId)
 
     if (error) {
       console.error('Error revoking API key:', error)
@@ -59,11 +56,11 @@ export async function DELETE(
     }
 
     await createAuditLog({
-      teamId: params.teamId,
+      teamId: teamId,
       userId: session.user.id,
       action: 'api_key.revoked',
       details: {
-        keyId: params.keyId,
+        keyId: keyId,
       },
     })
 

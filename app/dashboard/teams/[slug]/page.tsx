@@ -21,9 +21,10 @@ async function getTeam(slug: string): Promise<Team> {
 export default async function TeamSettingsPage({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
-  const team = await getTeam(params.slug)
+  const { slug } = await params
+  const team = await getTeam(slug)
 
   return <TeamSettingsForm team={team} />
 }

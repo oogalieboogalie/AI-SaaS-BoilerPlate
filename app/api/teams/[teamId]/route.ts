@@ -24,9 +24,10 @@ async function checkUserRole(supabase: any, userId: string, teamId: string) {
 
 export async function PUT(
   request: Request,
-  { params }: { params: { teamId: string } },
+  { params }: { params: Promise<{ teamId: string }> },
 ) {
   try {
+    const { teamId } = await params
     const supabase = createRouteHandlerClient({ cookies })
     const {
       data: { session },
@@ -36,11 +37,7 @@ export async function PUT(
       return new NextResponse('Unauthorized', { status: 401 })
     }
 
-    const userRole = await checkUserRole(
-      supabase,
-      session.user.id,
-      params.teamId,
-    )
+    const userRole = await checkUserRole(supabase, session.user.id, teamId)
     if (userRole !== 'owner') {
       return new NextResponse(
         'Forbidden: Only team owners can update team settings.',
@@ -60,7 +57,7 @@ export async function PUT(
     const { error } = await supabase
       .from('teams')
       .update({ name })
-      .eq('id', params.teamId)
+      .eq('id', teamId)
 
     if (error) {
       console.error('Error updating team:', error)
@@ -68,7 +65,7 @@ export async function PUT(
     }
 
     await createAuditLog({
-      teamId: params.teamId,
+      teamId: teamId,
       userId: session.user.id,
       action: 'team.updated',
       details: {
