@@ -1,7 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['images.unsplash.com', 'avatars.githubusercontent.com'],
+    // Updated for Next.js 15 - use remotePatterns instead of domains
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+      },
+    ],
   },
   // Enable standalone output for Docker deployments
   output: 'standalone',
@@ -36,11 +46,6 @@ const nextConfig = {
         ],
       },
     ]
-  },
-
-  // Optimize build performance
-  experimental: {
-    optimizeCss: true,
   },
 }
 

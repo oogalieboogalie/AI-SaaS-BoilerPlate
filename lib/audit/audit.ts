@@ -1,23 +1,17 @@
 import { createClient } from '@supabase/supabase-js'
-import { Database, Json } from '@/types/supabase'
 
 // Ensure these are set in your environment variables
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
 // Create a special Supabase client that uses the service role key
-const supabaseAdmin = createClient<Database>(
-  supabaseUrl,
-  supabaseServiceRoleKey,
-)
-
-type AuditLogAction = Database['public']['Enums']['audit_log_action']
+const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey)
 
 type CreateAuditLogParams = {
   teamId: string
   userId?: string
-  action: AuditLogAction
-  details?: Json
+  action: string
+  details?: any
 }
 
 /**
