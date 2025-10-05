@@ -5,12 +5,12 @@ const nextConfig = {
   },
   // Enable standalone output for Docker deployments
   output: 'standalone',
-  
+
   // Environment variable validation
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
-  
+
   // Security headers for production
   async headers() {
     return [
@@ -35,9 +35,9 @@ const nextConfig = {
           },
         ],
       },
-    ];
+    ]
   },
-  
+
   // Optimize build performance
   experimental: {
     optimizeCss: true,

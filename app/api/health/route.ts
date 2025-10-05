@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,21 +8,23 @@ export async function GET(request: NextRequest) {
       'NEXT_PUBLIC_SUPABASE_ANON_KEY',
       'SUPABASE_SERVICE_ROLE_KEY',
       'NEXTAUTH_SECRET',
-      'STRIPE_SECRET_KEY'
-    ];
+      'STRIPE_SECRET_KEY',
+    ]
 
-    const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
-    
+    const missingEnvVars = requiredEnvVars.filter(
+      (envVar) => !process.env[envVar],
+    )
+
     if (missingEnvVars.length > 0) {
       return NextResponse.json(
         {
           status: 'error',
           message: 'Missing required environment variables',
           missing: missingEnvVars,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         },
-        { status: 500 }
-      );
+        { status: 500 },
+      )
     }
 
     // Basic health checks
@@ -36,20 +38,20 @@ export async function GET(request: NextRequest) {
       checks: {
         environment: 'ok',
         database: 'pending', // Would implement actual DB check
-        stripe: 'pending',   // Would implement actual Stripe check
-      }
-    };
+        stripe: 'pending', // Would implement actual Stripe check
+      },
+    }
 
-    return NextResponse.json(healthStatus, { status: 200 });
+    return NextResponse.json(healthStatus, { status: 200 })
   } catch (error) {
     return NextResponse.json(
       {
         status: 'error',
         message: 'Health check failed',
         error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
-      { status: 500 }
-    );
+      { status: 500 },
+    )
   }
 }

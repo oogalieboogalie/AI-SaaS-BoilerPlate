@@ -1,9 +1,15 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { requireAuth, getUserTeams } from '@/lib/auth/auth';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { requireAuth, getUserTeams } from '@/lib/auth/auth'
 
 export default async function DashboardPage() {
-  const user = await requireAuth();
-  const teams = await getUserTeams(user.id);
+  const user = await requireAuth()
+  const teams = await getUserTeams(user.id)
 
   return (
     <div className="space-y-8">
@@ -44,7 +50,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {teams.filter(team => team.plan !== 'free').length}
+              {teams.filter((team) => team.plan !== 'free').length}
             </div>
           </CardContent>
         </Card>
@@ -62,5 +68,5 @@ export default async function DashboardPage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

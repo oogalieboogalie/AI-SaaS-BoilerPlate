@@ -1,43 +1,46 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { Database } from '@/lib/database/supabase';
-import { User, Team, TeamRole, Permission, ROLE_PERMISSIONS } from '@/types';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { Database } from '@/lib/database/supabase'
+import { User, Team, TeamRole, Permission, ROLE_PERMISSIONS } from '@/types'
 
 export async function getUser(): Promise<User | null> {
-  const supabase = createServerComponentClient<Database>({ cookies });
-  
+  const supabase = createServerComponentClient<Database>({ cookies })
+
   const {
     data: { user: authUser },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
-  if (!authUser) return null;
+  if (!authUser) return null
 
   const { data: user } = await supabase
     .from('users')
     .select('*')
     .eq('id', authUser.id)
-    .single();
+    .single()
 
-  return user;
+  return user
 }
 
 export async function requireAuth(): Promise<User> {
-  const user = await getUser();
-  
+  const user = await getUser()
+
   if (!user) {
-    redirect('/auth/login');
+    redirect('/auth/login')
   }
-  
-  return user;
+
+  return user
 }
 
-export async function getUserTeams(userId: string): Promise<(Team & { userRole: string })[]> {
-  const supabase = createServerComponentClient<Database>({ cookies });
-  
+export async function getUserTeams(
+  userId: string,
+): Promise<(Team & { userRole: string })[]> {
+  const supabase = createServerComponentClient<Database>({ cookies })
+
   const { data: teamMemberships } = await supabase
     .from('team_members')
-    .select(`
+    .select(
+      `
       id,
       role,
       team_id,
@@ -52,15 +55,16 @@ export async function getUserTeams(userId: string): Promise<(Team & { userRole: 
         created_at,
         updated_at
       )
-    `)
-    .eq('user_id', userId);
+    `,
+    )
+    .eq('user_id', userId)
 
-  if (!teamMemberships) return [];
+  if (!teamMemberships) return []
 
   return teamMemberships
-    .filter(membership => membership.teams)
-    .map(membership => {
-      const team = membership.teams as any;
+    .filter((membership) => membership.teams)
+    .map((membership) => {
+      const team = membership.teams as any
       return {
         id: team.id,
         name: team.name,
@@ -72,53 +76,57 @@ export async function getUserTeams(userId: string): Promise<(Team & { userRole: 
         created_at: team.created_at,
         updated_at: team.updated_at,
         userRole: membership.role,
-      };
-    });
+      }
+    })
 }
 
-export async function getUserTeamRole(userId: string, teamId: string): Promise<TeamRole | null> {
-  const supabase = createServerComponentClient<Database>({ cookies });
-  
+export async function getUserTeamRole(
+  userId: string,
+  teamId: string,
+): Promise<TeamRole | null> {
+  const supabase = createServerComponentClient<Database>({ cookies })
+
   const { data: membership } = await supabase
     .from('team_members')
     .select('role')
     .eq('user_id', userId)
     .eq('team_id', teamId)
-    .single();
+    .single()
 
-  return membership?.role as TeamRole || null;
+  return (membership?.role as TeamRole) || null
 }
 
 export async function hasPermission(
   userId: string,
   teamId: string,
-  permission: Permission
+  permission: Permission,
 ): Promise<boolean> {
-  const role = await getUserTeamRole(userId, teamId);
-  
-  if (!role) return false;
-  
-  return ROLE_PERMISSIONS[role].includes(permission);
+  const role = await getUserTeamRole(userId, teamId)
+
+  if (!role) return false
+
+  return ROLE_PERMISSIONS[role].includes(permission)
 }
 
 export async function requirePermission(
   userId: string,
   teamId: string,
-  permission: Permission
+  permission: Permission,
 ): Promise<void> {
-  const hasAccess = await hasPermission(userId, teamId, permission);
-  
+  const hasAccess = await hasPermission(userId, teamId, permission)
+
   if (!hasAccess) {
-    throw new Error('Insufficient permissions');
+    throw new Error('Insufficient permissions')
   }
 }
 
 export async function getTeamWithMembers(teamId: string) {
-  const supabase = createServerComponentClient<Database>({ cookies });
-  
+  const supabase = createServerComponentClient<Database>({ cookies })
+
   const { data: team } = await supabase
     .from('teams')
-    .select(`
+    .select(
+      `
       *,
       team_members (
         id,
@@ -131,20 +139,17 @@ export async function getTeamWithMembers(teamId: string) {
           avatar_url
         )
       )
-    `)
+    `,
+    )
     .eq('id', teamId)
-    .single();
+    .single()
 
-  return team;
+  return team
 }
 
-export async function createTeam(
-  userId: string,
-  name: string,
-  slug: string
-) {
-  const supabase = createServerComponentClient<Database>({ cookies });
-  
+export async function createTeam(userId: string, name: string, slug: string) {
+  const supabase = createServerComponentClient<Database>({ cookies })
+
   const { data: team, error } = await supabase
     .from('teams')
     .insert({
@@ -153,29 +158,29 @@ export async function createTeam(
       owner_id: userId,
     })
     .select()
-    .single();
+    .single()
 
-  if (error) throw error;
-  
-  return team;
+  if (error) throw error
+
+  return team
 }
 
 export async function inviteTeamMember(
   teamId: string,
   email: string,
-  role: TeamRole = TeamRole.MEMBER
+  role: TeamRole = TeamRole.MEMBER,
 ) {
-  const supabase = createServerComponentClient<Database>({ cookies });
-  
+  const supabase = createServerComponentClient<Database>({ cookies })
+
   // First, check if user exists
   const { data: existingUser } = await supabase
     .from('users')
     .select('id')
     .eq('email', email)
-    .single();
+    .single()
 
   if (!existingUser) {
-    throw new Error('User not found. They need to sign up first.');
+    throw new Error('User not found. They need to sign up first.')
   }
 
   // Check if already a member
@@ -184,10 +189,10 @@ export async function inviteTeamMember(
     .select('id')
     .eq('team_id', teamId)
     .eq('user_id', existingUser.id)
-    .single();
+    .single()
 
   if (existingMembership) {
-    throw new Error('User is already a team member');
+    throw new Error('User is already a team member')
   }
 
   // Add to team
@@ -199,37 +204,37 @@ export async function inviteTeamMember(
       role,
     })
     .select()
-    .single();
+    .single()
 
-  if (error) throw error;
-  
-  return membership;
+  if (error) throw error
+
+  return membership
 }
 
 export async function removeTeamMember(teamId: string, userId: string) {
-  const supabase = createServerComponentClient<Database>({ cookies });
-  
+  const supabase = createServerComponentClient<Database>({ cookies })
+
   const { error } = await supabase
     .from('team_members')
     .delete()
     .eq('team_id', teamId)
-    .eq('user_id', userId);
+    .eq('user_id', userId)
 
-  if (error) throw error;
+  if (error) throw error
 }
 
 export async function updateTeamMemberRole(
   teamId: string,
   userId: string,
-  role: TeamRole
+  role: TeamRole,
 ) {
-  const supabase = createServerComponentClient<Database>({ cookies });
-  
+  const supabase = createServerComponentClient<Database>({ cookies })
+
   const { error } = await supabase
     .from('team_members')
     .update({ role })
     .eq('team_id', teamId)
-    .eq('user_id', userId);
+    .eq('user_id', userId)
 
-  if (error) throw error;
+  if (error) throw error
 }
