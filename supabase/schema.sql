@@ -10,6 +10,16 @@ CREATE TYPE team_role AS ENUM ('owner', 'admin', 'member', 'viewer');
 CREATE TYPE subscription_plan AS ENUM ('free', 'starter', 'pro', 'enterprise');
 CREATE TYPE subscription_status AS ENUM ('active', 'canceled', 'incomplete', 'incomplete_expired', 'past_due', 'trialing', 'unpaid');
 CREATE TYPE credit_transaction_type AS ENUM ('purchase', 'usage', 'refund', 'bonus', 'expiry');
+CREATE TYPE audit_log_action AS ENUM (
+  'team.created',
+  'team.updated',
+  'team.deleted',
+  'member.invited',
+  'member.removed',
+  'member.role.updated',
+  'api_key.created',
+  'api_key.revoked'
+);
 
 -- Users table (extends Supabase auth.users)
 CREATE TABLE public.users (
@@ -85,7 +95,38 @@ CREATE TABLE public.api_usage (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- API Keys table
+CREATE TABLE public.api_keys (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  team_id UUID REFERENCES public.teams(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
+  name TEXT NOT NULL,
+  key_hash TEXT UNIQUE NOT NULL,
+  key_prefix TEXT UNIQUE NOT NULL,
+  last_used_at TIMESTAMP WITH TIME ZONE,
+  expires_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  revoked_at TIMESTAMP WITH TIME ZONE
+);
+
+-- Audit Logs table
+CREATE TABLE public.audit_logs (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  team_id UUID REFERENCES public.teams(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+  action audit_log_action NOT NULL,
+  details JSONB,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Create indexes for better performance
+CREATE INDEX idx_audit_logs_team_id ON public.audit_logs(team_id);
+CREATE INDEX idx_audit_logs_user_id ON public.audit_logs(user_id);
+CREATE INDEX idx_audit_logs_action ON public.audit_logs(action);
+CREATE INDEX idx_audit_logs_created_at ON public.audit_logs(created_at);
+CREATE INDEX idx_api_keys_team_id ON public.api_keys(team_id);
+CREATE INDEX idx_api_keys_user_id ON public.api_keys(user_id);
+CREATE INDEX idx_api_keys_key_prefix ON public.api_keys(key_prefix);
 CREATE INDEX idx_teams_owner_id ON public.teams(owner_id);
 CREATE INDEX idx_teams_slug ON public.teams(slug);
 CREATE INDEX idx_team_members_team_id ON public.team_members(team_id);
@@ -105,8 +146,41 @@ ALTER TABLE public.team_members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.credit_transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.api_usage ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.api_keys ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
 
 -- Row Level Security Policies
+
+-- Audit Log policies
+CREATE POLICY "Team members can view audit logs" ON public.audit_logs
+  FOR SELECT USING (
+    auth.uid() IN (
+      SELECT user_id FROM public.team_members
+      WHERE team_id = audit_logs.team_id
+    )
+  );
+
+-- This policy is permissive on purpose. The backend is responsible for
+-- ensuring that only authorized actions result in an audit log entry.
+CREATE POLICY "System can insert audit logs" ON public.audit_logs
+  FOR INSERT WITH CHECK (auth.role() = 'service_role');
+
+-- API Keys policies
+CREATE POLICY "Team members can view API keys" ON public.api_keys
+  FOR SELECT USING (
+    auth.uid() IN (
+      SELECT user_id FROM public.team_members
+      WHERE team_id = api_keys.team_id
+    )
+  );
+
+CREATE POLICY "Team owners and admins can manage API keys" ON public.api_keys
+  FOR ALL USING (
+    auth.uid() IN (
+      SELECT user_id FROM public.team_members
+      WHERE team_id = api_keys.team_id AND role IN ('owner', 'admin')
+    )
+  );
 
 -- Users policies
 CREATE POLICY "Users can view their own profile" ON public.users

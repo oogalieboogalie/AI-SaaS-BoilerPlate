@@ -1,71 +1,71 @@
 // Core types for the AI-SaaS application
 
 export interface User {
-  id: string;
-  email: string;
-  name: string;
-  avatar_url?: string;
-  role: UserRole;
-  created_at: string;
-  updated_at: string;
+  id: string
+  email: string
+  name: string
+  avatar_url?: string
+  role: UserRole
+  created_at: string
+  updated_at: string
 }
 
 export interface Team {
-  id: string;
-  name: string;
-  slug: string;
-  plan: SubscriptionPlan;
-  credits: number;
-  max_credits: number;
-  owner_id: string;
-  created_at: string;
-  updated_at: string;
+  id: string
+  name: string
+  slug: string
+  plan: SubscriptionPlan
+  credits: number
+  max_credits: number
+  owner_id: string
+  created_at: string
+  updated_at: string
 }
 
 export interface TeamMember {
-  id: string;
-  team_id: string;
-  user_id: string;
-  role: TeamRole;
-  permissions: Permission[];
-  created_at: string;
-  updated_at: string;
+  id: string
+  team_id: string
+  user_id: string
+  role: TeamRole
+  permissions: Permission[]
+  created_at: string
+  updated_at: string
 }
 
 export interface Subscription {
-  id: string;
-  team_id: string;
-  stripe_subscription_id: string;
-  stripe_customer_id: string;
-  plan: SubscriptionPlan;
-  status: SubscriptionStatus;
-  current_period_start: string;
-  current_period_end: string;
-  cancel_at_period_end: boolean;
-  created_at: string;
-  updated_at: string;
+  id: string
+  team_id: string
+  stripe_subscription_id: string
+  stripe_customer_id: string
+  plan: SubscriptionPlan
+  status: SubscriptionStatus
+  current_period_start: string
+  current_period_end: string
+  cancel_at_period_end: boolean
+  created_at: string
+  updated_at: string
 }
 
 export interface CreditTransaction {
-  id: string;
-  team_id: string;
-  user_id: string;
-  amount: number;
-  type: CreditTransactionType;
-  description: string;
-  metadata?: Record<string, any>;
-  created_at: string;
+  id: string
+  team_id: string
+  user_id: string
+  amount: number
+  type: CreditTransactionType
+  description: string
+  metadata?: Record<string, any>
+  created_at: string
 }
 
 export interface ApiUsage {
-  id: string;
-  team_id: string;
-  user_id: string;
-  endpoint: string;
-  credits_used: number;
-  request_data?: Record<string, any>;
-  response_data?: Record<string, any>;
-  created_at: string;
+  id: string
+  team_id: string
+  user_id: string
+  endpoint: string
+  credits_used: number
+  request_data?: Record<string, any>
+  response_data?: Record<string, any>
+  created_at: string
 }
 
 // Enums
@@ -87,20 +87,20 @@ export enum Permission {
   TEAM_READ = 'team:read',
   TEAM_UPDATE = 'team:update',
   TEAM_DELETE = 'team:delete',
-  
+
   // Member management
   MEMBER_INVITE = 'member:invite',
   MEMBER_REMOVE = 'member:remove',
   MEMBER_UPDATE_ROLE = 'member:update_role',
-  
+
   // Billing
   BILLING_READ = 'billing:read',
   BILLING_UPDATE = 'billing:update',
-  
+
   // Credits
   CREDITS_READ = 'credits:read',
   CREDITS_PURCHASE = 'credits:purchase',
-  
+
   // API usage
   API_USE = 'api:use',
   API_READ_USAGE = 'api:read_usage',
@@ -133,29 +133,29 @@ export enum CreditTransactionType {
 
 // API Response types
 export interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
+  success: boolean
+  data?: T
+  error?: string
+  message?: string
 }
 
 export interface PaginatedResponse<T = any> {
-  data: T[];
+  data: T[]
   pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    total_pages: number;
-  };
+    page: number
+    limit: number
+    total: number
+    total_pages: number
+  }
 }
 
 // Plan configurations
 export interface PlanConfig {
-  name: string;
-  price: number;
-  credits: number;
-  features: string[];
-  stripe_price_id?: string;
+  name: string
+  price: number
+  credits: number
+  features: string[]
+  stripe_price_id?: string
 }
 
 export const PLAN_CONFIGS: Record<SubscriptionPlan, PlanConfig> = {
@@ -183,10 +183,14 @@ export const PLAN_CONFIGS: Record<SubscriptionPlan, PlanConfig> = {
     name: 'Enterprise',
     price: 299,
     credits: 20000,
-    features: ['20,000 API calls/month', '24/7 support', 'Unlimited team members'],
+    features: [
+      '20,000 API calls/month',
+      '24/7 support',
+      'Unlimited team members',
+    ],
     stripe_price_id: 'price_enterprise_monthly',
   },
-};
+}
 
 // Role-based permissions mapping
 export const ROLE_PERMISSIONS: Record<TeamRole, Permission[]> = {
@@ -225,4 +229,4 @@ export const ROLE_PERMISSIONS: Record<TeamRole, Permission[]> = {
     Permission.CREDITS_READ,
     Permission.API_READ_USAGE,
   ],
-};
+}

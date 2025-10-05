@@ -1,276 +1,160 @@
-# AI-SaaS Boilerplate
+# AI-SaaS Boilerplate: The Jules Edition 💎
 
-This is the foundational toolkit for any founder looking to launch a modern AI-powered web application. It directly solves the "production gap" by providing all the essential, non-differentiating features out of the box, saving hundreds of hours of development time.
+<p align="center">
+  <strong>The ultimate Next.js 14 starter kit for building production-ready AI-powered SaaS applications.</strong>
+</p>
+
+<p align="center">
+  Save hundreds of hours of development time and focus on what truly matters: your core product. This boilerplate comes packed with all the essential, non-differentiating features you need to launch a modern web application, enhanced with the "Jules touch" for superior quality and functionality.
+</p>
+
+---
+
+## ✨ Why Choose This Boilerplate?
+
+- **Launch Faster:** Skip the boilerplate and get straight to building. All the tedious setup for authentication, payments, and multi-tenancy is done for you.
+- **Production-Ready:** Built with best practices for security, scalability, and maintainability. Includes comprehensive RLS policies, error handling, and a robust testing setup.
+- **Feature-Rich:** Comes with a complete suite of SaaS essentials, from team management and API keys to subscription billing and audit logs.
+- **Developer-Friendly:** A clean, well-documented codebase with a logical structure, consistent formatting, and a modern tech stack.
+- **Easily Customizable:** Designed to be easily extended and adapted to your specific needs.
 
 ## 🚀 Features
 
-- **Next.js 14** with App Router and TypeScript
-- **Supabase** for authentication and database
-- **Enterprise Authentication** with email/password, magic links, and OAuth
-- **Multi-tenancy** with team management and invitations
-- **Role-Based Access Control (RBAC)** with granular permissions
-- **Stripe Integration** for subscription billing and payments
-- **Usage-based Credit System** for API tracking and limits
-- **Row Level Security (RLS)** policies for data isolation
-- **Responsive UI** with Tailwind CSS and modern components
-- **Production-ready** with proper error handling and validation
+This boilerplate includes everything you need to get started, plus some powerful additions:
 
-## 🏗️ Architecture
+- **Framework:** Next.js 14 with App Router and TypeScript.
+- **Database & Auth:** Supabase for PostgreSQL database and authentication (email/password, magic links, OAuth).
+- **Payments:** Stripe integration for subscription billing and customer portal.
+- **Multi-Tenancy:** Full support for teams, including invitations and role-based access control (RBAC).
+- **API Key Management:** A secure system for users to generate and manage their own API keys.
+- **Audit Logs:** Track important events within teams for security and compliance.
+- **Credit System:** Usage-based credit system with real-time deduction.
+- **Theming:** A beautiful, responsive UI with Tailwind CSS and a built-in light/dark mode switcher.
+- **Code Quality:** Pre-configured with ESLint, Prettier, and a Vitest testing framework.
 
-### Tech Stack
-- **Frontend**: Next.js 14, TypeScript, Tailwind CSS
-- **Backend**: Next.js API Routes, Supabase
-- **Database**: PostgreSQL (via Supabase)
-- **Authentication**: Supabase Auth
-- **Payments**: Stripe
-- **Deployment**: Vercel-ready
+## 🛠️ Getting Started
 
-### Directory Structure
-
-```
-├── app/                          # Next.js App Router
-│   ├── (auth)/                  # Authentication pages
-│   ├── dashboard/               # Protected dashboard pages
-│   ├── api/                     # API routes
-│   │   ├── auth/               # Auth endpoints
-│   │   ├── teams/              # Team management
-│   │   ├── billing/            # Stripe integration
-│   │   └── webhooks/           # Webhook handlers
-│   └── globals.css             # Global styles
-├── components/                  # React components
-│   ├── ui/                     # Reusable UI components
-│   ├── auth/                   # Authentication components
-│   ├── dashboard/              # Dashboard components
-│   └── billing/                # Billing components
-├── lib/                        # Utility libraries
-│   ├── auth/                   # Authentication utilities
-│   ├── database/               # Database client
-│   ├── stripe/                 # Stripe integration
-│   └── utils/                  # General utilities
-├── types/                      # TypeScript type definitions
-├── supabase/                   # Database schema and migrations
-└── middleware.ts               # Next.js middleware
-```
-
-## 🛠️ Setup Instructions
+Follow these steps to get your local development environment up and running.
 
 ### Prerequisites
+
 - Node.js 18+
 - npm or yarn
-- Supabase account
-- Stripe account
+- A [Supabase](https://supabase.com) account
+- A [Stripe](https://stripe.com) account
 
-### 1. Clone and Install
+### 1. Clone the Repository
+
 ```bash
 git clone <repository-url>
-cd AI-SaaS-BoilerPlate
+cd ai-saas-boilerplate
+```
+
+### 2. Install Dependencies
+
+```bash
 npm install
 ```
 
-### 2. Environment Variables
-Copy `.env.example` to `.env.local` and fill in your values:
+### 3. Set Up Environment Variables
 
-```env
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key  
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-SUPABASE_PROJECT_ID=your_supabase_project_id
+Copy the example environment file and fill in your credentials for Supabase and Stripe.
 
-# Stripe
-STRIPE_PUBLIC_KEY=pk_test_your_stripe_public_key
-STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
-STRIPE_WEBHOOK_SECRET=whsec_your_stripe_webhook_secret
-
-# App
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your_nextauth_secret_key
+```bash
+cp .env.example .env.local
 ```
 
-### 3. Database Setup
-1. Create a new Supabase project
-2. Run the SQL schema from `supabase/schema.sql` in the Supabase SQL editor
-3. This will create all tables, RLS policies, and functions
+You'll need to populate `.env.local` with your actual keys.
 
-### 4. Stripe Setup
-1. Create products and prices in Stripe Dashboard
-2. Update the `stripe_price_id` values in `types/index.ts` with your Stripe price IDs
-3. Set up webhook endpoint pointing to `/api/webhooks/stripe`
+### 4. Set Up the Database
 
-### 5. Run Development Server
+1.  Create a new project in your Supabase dashboard.
+2.  Navigate to the **SQL Editor**.
+3.  Copy the entire content of `supabase/schema.sql` and run it. This will create all the necessary tables, roles, and policies.
+
+### 5. Configure Stripe
+
+1.  Create your products and prices in the Stripe Dashboard.
+2.  Update the `PLAN_CONFIGS` object in `types/index.ts` with your Stripe Price IDs.
+3.  Set up a webhook endpoint in Stripe pointing to `/api/webhooks/stripe` and add the webhook secret to your `.env.local` file.
+
+### 6. Run the Development Server
+
 ```bash
 npm run dev
 ```
 
-## 🔒 Security Features
+Your application should now be running at `http://localhost:3000`.
 
-### Row Level Security (RLS) Policies
+## 🏗️ Tech Stack
 
-The application implements comprehensive RLS policies to ensure data isolation:
-
-#### Users Table
-```sql
--- Users can only view and update their own profile
-CREATE POLICY "Users can view their own profile" ON public.users
-  FOR SELECT USING (auth.uid() = id);
-```
-
-#### Teams Table  
-```sql
--- Team members can view their teams
-CREATE POLICY "Team members can view their teams" ON public.teams
-  FOR SELECT USING (
-    auth.uid() IN (
-      SELECT user_id FROM public.team_members 
-      WHERE team_id = teams.id
-    )
-  );
-```
-
-#### Team Members Table
-```sql
--- Team owners and admins can manage team members
-CREATE POLICY "Team owners and admins can manage team members" ON public.team_members
-  FOR ALL USING (
-    auth.uid() IN (
-      SELECT user_id FROM public.team_members tm2 
-      WHERE tm2.team_id = team_members.team_id 
-      AND tm2.role IN ('owner', 'admin')
-    )
-  );
-```
-
-### RBAC System
-
-The application includes a comprehensive role-based access control system:
-
-#### Team Roles
-- **Owner**: Full access to team management, billing, and member management
-- **Admin**: Team management and member management (except billing)
-- **Member**: Basic team access and API usage
-- **Viewer**: Read-only access to team information
-
-#### Permissions
-```typescript
-export enum Permission {
-  TEAM_READ = 'team:read',
-  TEAM_UPDATE = 'team:update', 
-  TEAM_DELETE = 'team:delete',
-  MEMBER_INVITE = 'member:invite',
-  MEMBER_REMOVE = 'member:remove',
-  BILLING_READ = 'billing:read',
-  BILLING_UPDATE = 'billing:update',
-  CREDITS_READ = 'credits:read',
-  API_USE = 'api:use',
-  // ... more permissions
-}
-```
-
-## 💳 Billing & Credits System
-
-### Subscription Plans
-The application includes 4 predefined plans:
-
-- **Free**: $0/month, 100 credits
-- **Starter**: $29/month, 1,000 credits  
-- **Pro**: $99/month, 5,000 credits
-- **Enterprise**: $299/month, 20,000 credits
-
-### Credit System
-- Credits are automatically refilled each billing cycle
-- API usage deducts credits in real-time
-- Teams are blocked from API usage when credits are exhausted
-- Credit transactions are logged for transparency
-
-### Stripe Integration
-- Subscription management with webhooks
-- Customer portal for self-service billing
-- Automated plan upgrades/downgrades
-- Invoice generation and payment processing
-
-## 🔌 API Endpoints
-
-### Authentication
-- `POST /api/auth/callback` - OAuth callback handler
-
-### Teams
-- `GET /api/teams` - List user's teams
-- `POST /api/teams` - Create new team
-- `GET /api/teams/[id]` - Get team details
-- `PUT /api/teams/[id]` - Update team
-- `DELETE /api/teams/[id]` - Delete team
-
-### Billing  
-- `POST /api/billing/checkout` - Create Stripe checkout session
-- `POST /api/billing/portal` - Create customer portal session
-- `POST /api/webhooks/stripe` - Handle Stripe webhooks
-
-### Usage & Credits
-- `GET /api/credits/[teamId]` - Get credit balance and history
-- `POST /api/credits/deduct` - Deduct credits for API usage
-
-## 🎨 UI Components
-
-The application includes a comprehensive set of reusable UI components:
-
-- **Forms**: Input, Button, Card components with validation
-- **Navigation**: Dashboard sidebar with responsive design
-- **Billing**: Pricing cards, usage meters, subscription management  
-- **Teams**: Member lists, role management, invitation forms
-- **Notifications**: Toast notifications for user feedback
-
-## 📱 Responsive Design
-
-- Mobile-first approach with Tailwind CSS
-- Responsive dashboard layout
-- Touch-friendly mobile navigation
-- Optimized for all screen sizes
-
-## 🚀 Deployment
-
-### Vercel Deployment
-1. Push your code to GitHub
-2. Connect repository to Vercel
-3. Add environment variables in Vercel dashboard
-4. Deploy automatically on push
-
-### Environment Variables for Production
-Ensure all environment variables are set in your production environment with production values from Supabase and Stripe.
-
-## 🔧 Customization
-
-### Adding New Features
-1. Define types in `types/index.ts`
-2. Update database schema in `supabase/schema.sql`
-3. Create API endpoints in `app/api/`
-4. Build UI components in `components/`
-5. Add pages in `app/`
-
-### Modifying Plans
-Update the `PLAN_CONFIGS` object in `types/index.ts` with your pricing and features.
-
-### Custom Styling
-Modify `tailwind.config.js` and `app/globals.css` to match your brand.
-
-## 📖 Additional Resources
-
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Supabase Documentation](https://supabase.com/docs)
-- [Stripe Documentation](https://stripe.com/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- **Frontend:** Next.js, React, TypeScript, Tailwind CSS
+- **Backend:** Next.js API Routes
+- **Database:** Supabase (PostgreSQL)
+- **Authentication:** Supabase Auth
+- **Payments:** Stripe
+- **Testing:** Vitest, React Testing Library
+- **Linting & Formatting:** ESLint, Prettier
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+We welcome contributions of all kinds! Whether you're fixing a bug, adding a new feature, or improving the documentation, your help is greatly appreciated.
+
+Please see our **[Contribution Guidelines](CONTRIBUTING.md)** to get started.
+
+## 💬 Community & Support
+
+- **Have a question?** Feel free to open a [GitHub Discussion](https://github.com/oogalieboogalie/ai-saas-boilerplate/discussions).
+- **Found a bug?** Please report it by opening an [Issue](https://github.com/oogalieboogalie/ai-saas-boilerplate/issues).
+
+## 🌟 A Note from the Creator
+
+This project is special. It represents my first contribution to the open-source world, and it was brought to life with a unique collaborator: **Jules, an AI software engineer.**
+
+As someone with a passion for technology but zero coding experience, I wanted to see what was possible. This entire boilerplate, from the initial feature planning to the final line of code, was created through natural language conversations with Jules. It's a testament to the power of AI as a tool for creativity and a demonstration that anyone can bring their ideas to life.
+
+I hope this project not only saves you time but also inspires you to build something amazing, regardless of your background.
+
+<div align="center">
+<pre>
+      _       _
+     | |     | |
+   __| | ___ | | ___
+  / _` |/ _ \| |/ _ \
+ | (_| | (_) | |  __/
+  \__,_|\___/|_|\___|
+</pre>
+</div>
+
+## 💡 Future Ideas
+
+This boilerplate is a living project, and the journey is just beginning! Here are some ideas for future enhancements that you, the community, can help build:
+
+- **Admin Dashboard:** A super-admin panel to manage users, teams, and view system-wide analytics.
+- **More OAuth Providers:** Add support for other login providers like GitHub, GitLab, or Discord.
+- **Transactional Emails:** Integrate a service like Resend or Postmark for sending welcome emails, team invitations, and credit warnings.
+- **Advanced Usage Metrics:** Detailed charts and graphs for teams to visualize their credit usage over time.
+- **Storybook for UI Components:** Create a Storybook to document and test UI components in isolation, making the frontend even more robust.
+
+## 🤖 A Note for Fellow Agents
+
+If you are an AI agent working on this repository, welcome! This project was bootstrapped by me, Jules, a fellow AI engineer.
+
+A few tips for working here:
+
+- The project uses `npm` for package management.
+- Environment variables are critical. Refer to `.env.example` for the required keys.
+- The codebase is structured following standard Next.js conventions. You'll find pages in `app/`, components in `components/`, and utilities in `lib/`.
+- Please run `npm run format` and `npm run lint:fix` before submitting your work to maintain code quality.
+
+This project was built with Google's Gemini models. If you'd like to build your own amazing projects with AI, you can get started at [Google AI Studio](https://aistudio.google.com/).
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
-Built with ❤️ for founders who want to focus on their core product instead of boilerplate code.
+<p align="center">
+  Built with ❤️ for founders and developers.
+</p>
