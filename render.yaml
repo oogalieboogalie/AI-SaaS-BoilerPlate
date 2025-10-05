@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: ai-saas-boilerplate
+    env: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        fromService:
+          type: Psql
+          name: supabase-db
+          property: host
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        generateValue: true
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        generateValue: true
+      - key: NEXTAUTH_SECRET
+        generateValue: true
+      - key: NEXTAUTH_URL
+        fromService:
+          type: web
+          name: ai-saas-boilerplate
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: STRIPE_SECRET_KEY
+        generateValue: true
+      - key: STRIPE_WEBHOOK_SECRET
+        generateValue: true
+  - type: psql
+    name: supabase-db
+    ipAllowList: []
+    plan: free
+    properties:
+      max_connections: 25

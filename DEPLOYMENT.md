@@ -58,7 +58,44 @@ This guide walks you through deploying the AI-SaaS Boilerplate to production.
    - Add your custom domain in Vercel dashboard
    - Configure DNS records as instructed
 
-### Option 2: Docker Deployment
+### Option 2: Render
+
+Render provides a seamless deployment experience with its "Infrastructure as Code" feature using a `render.yaml` file.
+
+1.  **Fork the Repository**
+    - Start by forking this repository to your own GitHub account.
+
+2.  **Create a New "Blueprint" on Render**
+    - Go to your [Render Dashboard](https://dashboard.render.com/) and click "New" -> "Blueprint".
+    - Connect the GitHub repository you just forked.
+    - Render will automatically detect and use the `render.yaml` file from the root of the repository.
+
+3.  **Configure the Services**
+    - Render will display the services defined in `render.yaml` (the web service and the PostgreSQL database).
+    - Click "Approve" to create the services.
+
+4.  **Add Environment Variables**
+    - After the services are created, navigate to the "Environment" tab for your new `ai-saas-boilerplate` web service.
+    - The `render.yaml` file is configured to automatically generate values for most secrets, but you will need to manually create a group for your production secrets and add the following:
+      - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Your Supabase anonymous key.
+      - `SUPABASE_SERVICE_ROLE_KEY`: Your Supabase service role key.
+      - `STRIPE_SECRET_KEY`: Your Stripe secret key.
+      - `STRIPE_WEBHOOK_SECRET`: Your Stripe webhook secret.
+    - **Important**: The `render.yaml` sets `NEXTAUTH_URL` from the service's external URL and points `NEXT_PUBLIC_SUPABASE_URL` to the created database.
+
+5.  **Set Up the Database**
+    - Once the database is running, connect to it using the credentials provided in the Render dashboard.
+    - Navigate to the **SQL Editor** in your Supabase project (or use a local SQL client connected to the Render database).
+    - Copy the entire content of `supabase/schema.sql` and run it to create the necessary tables, roles, and policies.
+
+6.  **Configure Stripe Webhook**
+    - In your Stripe dashboard, create a new webhook endpoint.
+    - The URL should be `https://your-render-app-url.onrender.com/api/webhooks/stripe`.
+    - Make sure to use the webhook secret you created as an environment variable in Render.
+
+Your application will now be live and will automatically redeploy whenever you push changes to your forked repository's main branch.
+
+### Option 3: Docker Deployment
 
 1. **Build Image**
 
@@ -77,7 +114,7 @@ This guide walks you through deploying the AI-SaaS Boilerplate to production.
    docker-compose up -d
    ```
 
-### Option 3: Traditional VPS
+### Option 4: Traditional VPS
 
 1. **Server Setup**
 
