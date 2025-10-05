@@ -4,7 +4,8 @@
 
 ### 🏗️ Core Infrastructure
 
-- ✅ Next.js 14 with App Router and TypeScript
+- ✅ Next.js 15 with App Router and TypeScript
+- ✅ React 19 for improved performance and features
 - ✅ Supabase integration for auth and database
 - ✅ Stripe billing and subscription management
 - ✅ Multi-tenant team management with RBAC
