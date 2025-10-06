@@ -1,7 +1,7 @@
 # AI-SaaS Boilerplate: The Jules Edition 💎
 
 <p align="center">
-  <strong>The ultimate Next.js 14 starter kit for building production-ready AI-powered SaaS applications.</strong>
+  <strong>The ultimate Next.js 15 starter kit for building production-ready AI-powered SaaS applications.</strong>
 </p>
 
 <p align="center">
@@ -22,7 +22,7 @@
 
 This boilerplate includes everything you need to get started, plus some powerful additions:
 
-- **Framework:** Next.js 14 with App Router and TypeScript.
+- **Framework:** Next.js 15 with App Router and TypeScript.
 - **Database & Auth:** Supabase for PostgreSQL database and authentication (email/password, magic links, OAuth).
 - **Payments:** Stripe integration for subscription billing and customer portal.
 - **Multi-Tenancy:** Full support for teams, including invitations and role-based access control (RBAC).
@@ -88,7 +88,7 @@ Your application should now be running at `http://localhost:3000`.
 
 ## 🏗️ Tech Stack
 
-- **Frontend:** Next.js, React, TypeScript, Tailwind CSS
+- **Frontend:** Next.js 15, React 19, TypeScript, Tailwind CSS
 - **Backend:** Next.js API Routes
 - **Database:** Supabase (PostgreSQL)
 - **Authentication:** Supabase Auth
@@ -106,6 +106,15 @@ Please see our **[Contribution Guidelines](CONTRIBUTING.md)** to get started.
 
 - **Have a question?** Feel free to open a [GitHub Discussion](https://github.com/oogalieboogalie/ai-saas-boilerplate/discussions).
 - **Found a bug?** Please report it by opening an [Issue](https://github.com/oogalieboogalie/ai-saas-boilerplate/issues).
+
+## 🙏 Acknowledgments
+
+A special thanks to **Arrow** ([@Arrowk99](https://x.com/Arrowk99)) for his valuable feedback and contributions to this project. Arrow is an advanced developer whose insights helped guide the recent upgrade to Next.js 15 and React 19, making this boilerplate even more modern and robust.
+
+Check out Arrow's impressive work:
+- [MultiDevs](https://multidevs.com/) - Multi-platform development solutions
+- [Swank.pk](https://swank.pk/) - Premium e-commerce platform
+- [RingAssist.io](https://ringassist.io/) - AI-powered call assistance
 
 ## 🌟 A Note from the Creator
 
