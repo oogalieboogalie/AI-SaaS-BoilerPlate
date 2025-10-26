@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Database } from '@/lib/database/supabase'
 import { generateSlug } from '@/lib/utils/utils'
 import { z } from 'zod'
+import { errorHandler } from '@/lib/errors/errorHandler'
 
 const createTeamSchema = z.object({
   name: z
@@ -70,18 +71,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ data: team }, { status: 201 })
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.errors[0].message },
-        { status: 400 },
-      )
-    }
-
     console.error('Error in POST /api/teams:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 },
-    )
+    return errorHandler(error)
   }
 }
 
@@ -138,9 +129,6 @@ export async function GET() {
     return NextResponse.json({ data: teams })
   } catch (error) {
     console.error('Error in GET /api/teams:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 },
-    )
+    return errorHandler(error)
   }
 }

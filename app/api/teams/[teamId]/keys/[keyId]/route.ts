@@ -2,6 +2,7 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { createAuditLog } from '@/lib/audit/audit'
+import { errorHandler } from '@/lib/errors/errorHandler'
 
 // Helper to check user role in a team
 async function checkUserRole(supabase: any, userId: string, teamId: string) {
@@ -67,6 +68,6 @@ export async function DELETE(
     return new NextResponse(null, { status: 204 }) // 204 No Content for successful deletion
   } catch (error) {
     console.error('[API_KEY_DELETE]', error)
-    return new NextResponse('Internal Server Error', { status: 500 })
+    return errorHandler(error)
   }
 }

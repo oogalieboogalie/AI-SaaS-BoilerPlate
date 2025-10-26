@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createAuditLog } from '@/lib/audit/audit'
+import { errorHandler } from '@/lib/errors/errorHandler'
 
 const updateTeamSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
@@ -76,6 +77,6 @@ export async function PUT(
     return NextResponse.json({ message: 'Team updated successfully' })
   } catch (error) {
     console.error('[TEAM_UPDATE_ERROR]', error)
-    return new NextResponse('Internal Server Error', { status: 500 })
+    return errorHandler(error)
   }
 }

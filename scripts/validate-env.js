@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+require('dotenv').config({ path: '.env.local' });
+
 /**
  * Environment validation script for AI-SaaS Boilerplate
  * Run this before starting the application to ensure all required environment variables are set

@@ -1,6 +1,11 @@
+import { supabaseAdmin } from '@/lib/database/supabase';
+import { SubscriptionPlan, PLAN_CONFIGS } from '@/types';
 import Stripe from 'stripe'
-import { SubscriptionPlan, PLAN_CONFIGS } from '@/types'
-import { supabaseAdmin } from '@/lib/database/supabase'
+import {
+  addMonthlyCredits,
+  getPlanFromPriceId,
+  updateTeamSubscription,
+} from './actions'
 
 export const stripe = new Stripe(
   process.env.STRIPE_SECRET_KEY || 'sk_test_dummy',
@@ -84,130 +89,43 @@ export async function handleSubscriptionWebhook(event: Stripe.Event) {
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  const teamId = session.metadata?.team_id
-  if (!teamId) return
+  const teamId = session.metadata?.team_id;
+  if (!teamId) return;
 
   const subscription = await stripe.subscriptions.retrieve(
     session.subscription as string,
-  )
-  const plan = getPlanFromPriceId(subscription.items.data[0].price.id)
+  );
 
-  if (!plan) return
-
-  // Update team subscription
-  const { error } = await supabaseAdmin.from('subscriptions').upsert({
-    team_id: teamId,
-    stripe_subscription_id: subscription.id,
-    stripe_customer_id: subscription.customer as string,
-    plan,
-    status: subscription.status as any,
-    current_period_start: new Date(
-      subscription.current_period_start * 1000,
-    ).toISOString(),
-    current_period_end: new Date(
-      subscription.current_period_end * 1000,
-    ).toISOString(),
-    cancel_at_period_end: subscription.cancel_at_period_end,
-  })
-
-  if (error) {
-    console.error('Error updating subscription:', error)
-    return
-  }
-
-  // Update team plan and credits
-  await supabaseAdmin
-    .from('teams')
-    .update({
-      plan,
-      max_credits: PLAN_CONFIGS[plan].credits,
-      credits: PLAN_CONFIGS[plan].credits, // Reset credits on plan change
-    })
-    .eq('id', teamId)
-
-  // Record credit transaction
-  await supabaseAdmin.from('credit_transactions').insert({
-    team_id: teamId,
-    user_id: teamId, // Use team owner, should be improved
-    amount: PLAN_CONFIGS[plan].credits,
-    type: 'purchase',
-    description: `Monthly ${PLAN_CONFIGS[plan].name} plan credits`,
-  })
+  await updateTeamSubscription(teamId, subscription);
 }
 
 async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
   if (invoice.subscription) {
     const subscription = await stripe.subscriptions.retrieve(
       invoice.subscription as string,
-    )
+    );
     const { data: existingSubscription } = await supabaseAdmin
       .from('subscriptions')
       .select('team_id, plan')
       .eq('stripe_subscription_id', subscription.id)
-      .single()
+      .single();
 
     if (existingSubscription) {
-      const plan = existingSubscription.plan as SubscriptionPlan
-
-      // Add monthly credits
-      await supabaseAdmin
-        .from('teams')
-        .update({
-          credits: PLAN_CONFIGS[plan].credits, // Reset to max credits
-        })
-        .eq('id', existingSubscription.team_id)
-
-      // Record credit transaction
-      await supabaseAdmin.from('credit_transactions').insert({
-        team_id: existingSubscription.team_id,
-        user_id: existingSubscription.team_id, // Should be team owner
-        amount: PLAN_CONFIGS[plan].credits,
-        type: 'purchase',
-        description: `Monthly ${PLAN_CONFIGS[plan].name} plan credits`,
-      })
+      const plan = existingSubscription.plan as SubscriptionPlan;
+      await addMonthlyCredits(existingSubscription.team_id, plan);
     }
   }
 }
 
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
-  const plan = getPlanFromPriceId(subscription.items.data[0].price.id)
-  if (!plan) return
-
-  const { error } = await supabaseAdmin
-    .from('subscriptions')
-    .update({
-      plan,
-      status: subscription.status as any,
-      current_period_start: new Date(
-        subscription.current_period_start * 1000,
-      ).toISOString(),
-      current_period_end: new Date(
-        subscription.current_period_end * 1000,
-      ).toISOString(),
-      cancel_at_period_end: subscription.cancel_at_period_end,
-    })
-    .eq('stripe_subscription_id', subscription.id)
-
-  if (error) {
-    console.error('Error updating subscription:', error)
-    return
-  }
-
-  // Update team plan and credits
   const { data: subscriptionData } = await supabaseAdmin
     .from('subscriptions')
     .select('team_id')
     .eq('stripe_subscription_id', subscription.id)
-    .single()
+    .single();
 
   if (subscriptionData) {
-    await supabaseAdmin
-      .from('teams')
-      .update({
-        plan,
-        max_credits: PLAN_CONFIGS[plan].credits,
-      })
-      .eq('id', subscriptionData.team_id)
+    await updateTeamSubscription(subscriptionData.team_id, subscription);
   }
 }
 
@@ -217,11 +135,11 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     .update({
       status: 'canceled',
     })
-    .eq('stripe_subscription_id', subscription.id)
+    .eq('stripe_subscription_id', subscription.id);
 
   if (error) {
-    console.error('Error updating subscription:', error)
-    return
+    console.error('Error updating subscription:', error);
+    return;
   }
 
   // Downgrade to free plan
@@ -229,7 +147,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     .from('subscriptions')
     .select('team_id')
     .eq('stripe_subscription_id', subscription.id)
-    .single()
+    .single();
 
   if (subscriptionData) {
     await supabaseAdmin
@@ -239,17 +157,8 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
         max_credits: PLAN_CONFIGS[SubscriptionPlan.FREE].credits,
         credits: Math.min(PLAN_CONFIGS[SubscriptionPlan.FREE].credits, 0), // Don't exceed free plan limits
       })
-      .eq('id', subscriptionData.team_id)
+      .eq('id', subscriptionData.team_id);
   }
-}
-
-function getPlanFromPriceId(priceId: string): SubscriptionPlan | null {
-  for (const [plan, config] of Object.entries(PLAN_CONFIGS)) {
-    if (config.stripe_price_id === priceId) {
-      return plan as SubscriptionPlan
-    }
-  }
-  return null
 }
 
 export async function getUsageForBilling(

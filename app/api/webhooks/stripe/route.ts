@@ -2,6 +2,7 @@ import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe, handleSubscriptionWebhook } from '@/lib/stripe/stripe'
 import Stripe from 'stripe'
+import { errorHandler } from '@/lib/errors/errorHandler'
 
 export async function POST(request: NextRequest) {
   const body = await request.text()
@@ -29,9 +30,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ received: true })
   } catch (error) {
     console.error('Error handling webhook:', error)
-    return NextResponse.json(
-      { error: 'Webhook handler failed' },
-      { status: 500 },
-    )
+    return errorHandler(error)
   }
 }

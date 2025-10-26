@@ -8,6 +8,7 @@ import {
 } from '@/lib/stripe/stripe'
 import { PLAN_CONFIGS, SubscriptionPlan } from '@/types'
 import { z } from 'zod'
+import { errorHandler } from '@/lib/errors/errorHandler'
 
 const checkoutSchema = z.object({
   teamId: z.string().uuid(),
@@ -115,17 +116,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url: session.url })
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.errors[0].message },
-        { status: 400 },
-      )
-    }
-
     console.error('Error in POST /api/billing/checkout:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 },
-    )
+    return errorHandler(error)
   }
 }

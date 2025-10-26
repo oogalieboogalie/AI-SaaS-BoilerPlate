@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import crypto from 'crypto'
 import { createAuditLog } from '@/lib/audit/audit'
+import { errorHandler } from '@/lib/errors/errorHandler'
 
 const createKeySchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -63,7 +64,7 @@ export async function GET(
     return NextResponse.json(apiKeys)
   } catch (error) {
     console.error('[API_KEYS_GET]', error)
-    return new NextResponse('Internal Server Error', { status: 500 })
+    return errorHandler(error)
   }
 }
 
@@ -141,6 +142,6 @@ export async function POST(
     return NextResponse.json({ name, apiKey })
   } catch (error) {
     console.error('[API_KEYS_POST]', error)
-    return new NextResponse('Internal Server Error', { status: 500 })
+    return errorHandler(error)
   }
 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { errorHandler } from '@/lib/errors/errorHandler'
 
 export async function GET(request: NextRequest) {
   try {
@@ -44,14 +45,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(healthStatus, { status: 200 })
   } catch (error) {
-    return NextResponse.json(
-      {
-        status: 'error',
-        message: 'Health check failed',
-        error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString(),
-      },
-      { status: 500 },
-    )
+    console.error('Error in GET /api/health:', error)
+    return errorHandler(error)
   }
 }
