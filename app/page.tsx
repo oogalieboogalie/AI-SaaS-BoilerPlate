@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/card'
 import { PLAN_CONFIGS, SubscriptionPlan } from '@/types'
 import { formatCurrency } from '@/lib/utils/utils'
+import AnimatedText from '@/components/AnimatedText'
 
 export default function HomePage() {
   return (
@@ -38,8 +39,11 @@ export default function HomePage() {
       <section className="mx-auto max-w-7xl px-4 pb-16 pt-20 sm:px-6 lg:px-8">
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-            Build Your AI-SaaS
-            <span className="text-primary-600"> Faster</span>
+            <AnimatedText
+              text="Build Your AI-SaaS Faster"
+              animationType="typewriter"
+              speed={100}
+            />
           </h1>
           <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-gray-600">
             Production-ready boilerplate with enterprise authentication,
