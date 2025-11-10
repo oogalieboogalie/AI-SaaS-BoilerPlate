@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { SoundSettings } from '@/components/dashboard/sound-settings'
 import { requireAuth, getUserTeams } from '@/lib/auth/auth'
 
 export default async function DashboardPage() {
@@ -67,6 +68,8 @@ export default async function DashboardPage() {
           </div>
         </CardContent>
       </Card>
+
+      <SoundSettings />
     </div>
   )
 }

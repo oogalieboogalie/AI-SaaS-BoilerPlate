@@ -1,5 +1,6 @@
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/theme-provider'
+import { SoundProvider } from '@/components/sound-provider'
 import './globals.css'
 import type { Metadata } from 'next'
 
@@ -23,7 +24,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <SoundProvider>{children}</SoundProvider>
           <Toaster />
         </ThemeProvider>
       </body>

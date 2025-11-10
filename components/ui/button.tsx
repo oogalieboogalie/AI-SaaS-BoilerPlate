@@ -1,5 +1,8 @@
+'use client'
+
 import * as React from 'react'
-import { cn } from '@/lib/utils/utils'
+import { cn } from '@/lib/utils'
+import { useSound } from '@/lib/hooks/useSound'
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -27,6 +30,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) => {
+    const playSound = useSound()
+
     return (
       <button
         className={cn(
@@ -55,6 +60,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         disabled={disabled || loading}
         ref={ref}
+        onClick={(e) => {
+          playSound('click')
+          props.onClick?.(e)
+        }}
+        onMouseEnter={() => playSound('hover')}
         {...props}
       >
         {loading && (
