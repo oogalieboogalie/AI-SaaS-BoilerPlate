@@ -1,7 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
@@ -35,7 +41,11 @@ export function SoundSettings() {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center space-x-2">
-          <Switch id="sound-toggle" checked={!isMuted} onCheckedChange={handleToggle} />
+          <Switch
+            id="sound-toggle"
+            checked={!isMuted}
+            onCheckedChange={handleToggle}
+          />
           <Label htmlFor="sound-toggle">Enable Sounds</Label>
         </div>
         <div className="space-y-2">

@@ -8,6 +8,16 @@
 const fs = require('fs')
 const path = require('path')
 
+// Load .env.local if present
+try {
+  const envPath = path.join(process.cwd(), '.env.local')
+  if (fs.existsSync(envPath)) {
+    require('dotenv').config({ path: envPath })
+  }
+} catch (e) {
+  // Ignore if dotenv is not available yet
+}
+
 // Required environment variables for production
 const REQUIRED_ENV_VARS = [
   'NEXT_PUBLIC_SUPABASE_URL',

@@ -14,7 +14,7 @@ const createTeamSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient<Database>({ cookies })
+    const supabase = createRouteHandlerClient({ cookies })
 
     // Get the authenticated user
     const {
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const supabase = createRouteHandlerClient<Database>({ cookies })
+    const supabase = createRouteHandlerClient({ cookies })
 
     // Get the authenticated user
     const {
