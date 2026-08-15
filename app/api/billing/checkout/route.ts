@@ -16,7 +16,7 @@ const checkoutSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient<Database>({ cookies })
+    const supabase = createRouteHandlerClient({ cookies })
 
     // Get the authenticated user
     const {
