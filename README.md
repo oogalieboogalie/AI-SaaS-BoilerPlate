@@ -112,6 +112,7 @@ Please see our **[Contribution Guidelines](CONTRIBUTING.md)** to get started.
 A special thanks to **Arrow** ([@Arrowk99](https://x.com/Arrowk99)) for his valuable feedback and contributions to this project. Arrow is an advanced developer whose insights helped guide the recent upgrade to Next.js 15 and React 19, making this boilerplate even more modern and robust.
 
 Check out Arrow's impressive work:
+
 - [MultiDevs](https://multidevs.com/) - Multi-platform development solutions
 - [Swank.pk](https://swank.pk/) - Premium e-commerce platform
 - [RingAssist.io](https://ringassist.io/) - AI-powered call assistance
@@ -123,7 +124,6 @@ This project is special. It represents my first contribution to the open-source 
 As someone with a passion for technology but zero coding experience, I wanted to see what was possible. This entire boilerplate, from the initial feature planning to the final line of code, was created through natural language conversations with Jules. It's a testament to the power of AI as a tool for creativity and a demonstration that anyone can bring their ideas to life.
 
 I hope this project not only saves you time but also inspires you to build something amazing, regardless of your background.
-
 
 ## 💡 Future Ideas
 

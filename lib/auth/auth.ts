@@ -5,7 +5,7 @@ import { Database } from '@/lib/database/supabase'
 import { User, Team, TeamRole, Permission, ROLE_PERMISSIONS } from '@/types'
 
 export async function getUser(): Promise<User | null> {
-  const supabase = createServerComponentClient<Database>({ cookies })
+  const supabase = createServerComponentClient({ cookies })
 
   const {
     data: { user: authUser },
@@ -35,7 +35,7 @@ export async function requireAuth(): Promise<User> {
 export async function getUserTeams(
   userId: string,
 ): Promise<(Team & { userRole: string })[]> {
-  const supabase = createServerComponentClient<Database>({ cookies })
+  const supabase = createServerComponentClient({ cookies })
 
   const { data: teamMemberships } = await supabase
     .from('team_members')
@@ -84,7 +84,7 @@ export async function getUserTeamRole(
   userId: string,
   teamId: string,
 ): Promise<TeamRole | null> {
-  const supabase = createServerComponentClient<Database>({ cookies })
+  const supabase = createServerComponentClient({ cookies })
 
   const { data: membership } = await supabase
     .from('team_members')
@@ -121,7 +121,7 @@ export async function requirePermission(
 }
 
 export async function getTeamWithMembers(teamId: string) {
-  const supabase = createServerComponentClient<Database>({ cookies })
+  const supabase = createServerComponentClient({ cookies })
 
   const { data: team } = await supabase
     .from('teams')
@@ -148,7 +148,7 @@ export async function getTeamWithMembers(teamId: string) {
 }
 
 export async function createTeam(userId: string, name: string, slug: string) {
-  const supabase = createServerComponentClient<Database>({ cookies })
+  const supabase = createServerComponentClient({ cookies })
 
   const { data: team, error } = await supabase
     .from('teams')
@@ -170,7 +170,7 @@ export async function inviteTeamMember(
   email: string,
   role: TeamRole = TeamRole.MEMBER,
 ) {
-  const supabase = createServerComponentClient<Database>({ cookies })
+  const supabase = createServerComponentClient({ cookies })
 
   // First, check if user exists
   const { data: existingUser } = await supabase
@@ -212,7 +212,7 @@ export async function inviteTeamMember(
 }
 
 export async function removeTeamMember(teamId: string, userId: string) {
-  const supabase = createServerComponentClient<Database>({ cookies })
+  const supabase = createServerComponentClient({ cookies })
 
   const { error } = await supabase
     .from('team_members')
@@ -228,7 +228,7 @@ export async function updateTeamMemberRole(
   userId: string,
   role: TeamRole,
 ) {
-  const supabase = createServerComponentClient<Database>({ cookies })
+  const supabase = createServerComponentClient({ cookies })
 
   const { error } = await supabase
     .from('team_members')
