@@ -146,7 +146,7 @@ A few tips for working here:
 - The codebase is structured following standard Next.js conventions. You'll find pages in `app/`, components in `components/`, and utilities in `lib/`.
 - Please run `npm run format` and `npm run lint:fix` before submitting your work to maintain code quality.
 
-This project was built with Google's Gemini models. If you'd like to build your own amazing projects with AI, you can get started at [Google AI Studio](https://aistudio.google.com/).
+This project was built with Google's Gemini models. If you'd like to build your own amazing projects with AI, you can get started at [Jules](https://jules.google.com) or [Google AI Studio](https://aistudio.google.com/) completely free.
 
 ## 📄 License
 
